@@ -38,6 +38,18 @@ function ideallogic_menu() {
 }
 
 /**
+ * Implements hook_theme().
+ */
+function ideallogic_theme($existing, $type, $theme, $path) {
+  return [
+    'ideallogic-all' => [
+      'variables' => [],
+      'template' => 'ideallogic',
+    ],
+  ];
+}
+
+/**
  * Page for all Programs.
  */
 function ideallogic_home() {
@@ -53,7 +65,9 @@ function ideallogic_home() {
  * @return string
  */
 function ideallogic_program_page_mine($programid) {
-  $program_request = drupal_http_request('https://apps.ideal-logic.com/api/0eeeb538.json?program=' . $programid);
+  $program_request = drupal_http_request(
+    'https://apps.ideal-logic.com/api/0eeeb538.json?program=' . $programid
+  );
   $decoded_program_data = json_decode($program_request->data);
 
   $program_section = [];
@@ -84,11 +98,17 @@ function ideallogic_program_page_mine($programid) {
             $output .= date('M', $course_data['start_date']);
             $output .= ' ' . date('d', $course_data['start_date']);
             $output .= '<div class="time">';
-            $output .= date('H:m A', $course_data['start_date']) . '-' . date('H:m A', $course_data['end_date']);
+            $output .= date('H:m A', $course_data['start_date']) . '-' . date(
+                'H:m A',
+                $course_data['end_date']
+              );
             $output .= '</div>';
             $output .= '</div>';
             $output .= '<p>' . $course_data['course_name'] . '<br>';
-            $output .= l(t('Register for this session'), $course_data['registration_url']);
+            $output .= l(
+              t('Register for this session'),
+              $course_data['registration_url']
+            );
             $output .= '</p>';
           }
         }
@@ -132,12 +152,17 @@ function ideallogic_render_data() {
   $program_key = '3TRP-KKVYH';
   $api_key = variable_get('ideallogic_api_key', '');
   if ($api_key == '') {
-    drupal_set_message(t('You need to configure your Ideal-logic api key.'), 'error');
+    drupal_set_message(
+      t('You need to configure your Ideal-logic api key.'),
+      'error'
+    );
     return '';
   }
-  $data = drupal_http_build_query([
-    'key' => $api_key,
-  ]);
+  $data = drupal_http_build_query(
+    [
+      'key' => $api_key,
+    ]
+  );
 
   $options = [
     'method' => 'POST',
@@ -146,11 +171,17 @@ function ideallogic_render_data() {
       'content-type' => 'application/x-www-form-urlencoded',
     ],
   ];
-  $request = drupal_http_request('https://apps.ideal-logic.com/api/0eeeb538.json?program=' . $program_key, $options);
+  $request = drupal_http_request(
+    'https://apps.ideal-logic.com/api/0eeeb538.json?program=' . $program_key,
+    $options
+  );
   $decoded_data = drupal_json_decode($request->data);
   $program_data = [];
   foreach ($decoded_data as $key => $value) {
-    if (array_key_exists($value['all_programs'][1]['id'], $program_data) && $value['all_programs'][1]['id'] != $program_key) {
+    if (array_key_exists(
+        $value['all_programs'][1]['id'],
+        $program_data
+      ) && $value['all_programs'][1]['id'] != $program_key) {
       $program_data[$value['all_programs'][1]['id']]['count'] += 1;
     }
     elseif ($value['all_programs'][1]['id'] != $program_key) {
