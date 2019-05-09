@@ -42,9 +42,17 @@ function ideallogic_menu() {
  */
 function ideallogic_theme($existing, $type, $theme, $path) {
   return [
-    'ideallogic-all' => [
-      'variables' => [],
-      'template' => 'ideallogic',
+    'ideallogic_program_block' => [
+      'template' => 'templates/block--ideallogic',
+      'variables' => [
+        'items' => NULL,
+      ],
+    ],
+    'ideallogic_courses' => [
+      'template' => 'templates/ideallogic-courses',
+      'variables' => [
+        'courses' => NULL,
+      ],
     ],
   ];
 }
@@ -59,65 +67,40 @@ function ideallogic_home() {
 /**
  * Page data for the course.
  *
- * @param string $programid
+ * @param string $program_id
  *  The program ID to query courses for.
  *
  * @return string
  */
-function ideallogic_program_page_mine($programid) {
-  $program_request = drupal_http_request(
-    'https://apps.ideal-logic.com/api/0eeeb538.json?program=' . $programid
-  );
-  $decoded_program_data = json_decode($program_request->data);
-
+function ideallogic_program_page_mine($program_id) {
+  $decoded_program_data = _get_ideallogic_data($program_id);
   $program_section = [];
-  $output = '';
   foreach ($decoded_program_data as $key => $data) {
-    $start_date = strtotime($data->start_date);
-    $end_date = strtotime($data->end_date);
-    $program_section[$data->program->id]['name'] = $data->program->name;
-    $program_section[$data->program->id][$data->identification][] = [
-      $data->id => [
-        'course_name' => $data->course->name,
-        'program_name' => $data->program->name,
-        'registration_url' => $data->registration_url,
-        'start_date' => $start_date,
-        'end_date' => $end_date,
-      ],
+    $program_data_id = $data['program']['id'];
+    $start_date = strtotime($data['start_date']);
+    $end_date = strtotime($data['end_date']);
+    $program_section[$program_data_id]['name'] = $data['program']['name'];
+    $program_section[$program_data_id]['courses'][$data['identification']]['brief_description'] = $data['course']['description'];
+    $program_section[$program_data_id]['courses'][$data['identification']]['location'] = $data['course']['delivery'];
+    $program_section[$program_data_id]['courses'][$data['identification']]['instructors'] = $data['instructors'];
+    $program_section[$program_data_id]['courses'][$data['identification']]['section'][] = [
+      'section_id' => $data['id'],
+      'section_name' => $data['course']['name'],
+      'program_name' => $data['program']['name'],
+      'section_slots' => $data['slots'],
+      'section_slots_remaining' => $data['num_remaining_slots'],
+      'registration_url' => l(t('Register for this session'), $data['registration_url']),
+      'start_date_full' => format_date($start_date),
+      'start_date_month' => format_date($start_date, 'custom', 'M'),
+      'start_date_day' => format_date($start_date, 'custom', 'd'),
+      'start_date_time' => format_date($start_date, 'custom', 'h:m A'),
+      'end_date_full' => format_date($end_date),
+      'end_date_month' => format_date($end_date, 'custom', 'M'),
+      'end_date_day' => format_date($end_date, 'custom', 'd'),
+      'end_date_time' => format_date($end_date, 'custom', 'h:m A'),
     ];
   }
-  foreach ($program_section as $program_id => $all_data) {
-    $output .= '<h3>' . $all_data['name'] . '</h3>';
-    $output .= '<div class="courses">';
-    $output .= 'Courses';
-    foreach ($all_data as $courses) {
-      if (is_array($courses)) {
-        foreach ($courses as $course) {
-          foreach ($course as $course_data) {
-            $output .= '<div class="datetime">';
-            $output .= date('M', $course_data['start_date']);
-            $output .= ' ' . date('d', $course_data['start_date']);
-            $output .= '<div class="time">';
-            $output .= date('H:m A', $course_data['start_date']) . '-' . date(
-                'H:m A',
-                $course_data['end_date']
-              );
-            $output .= '</div>';
-            $output .= '</div>';
-            $output .= '<p>' . $course_data['course_name'] . '<br>';
-            $output .= l(
-              t('Register for this session'),
-              $course_data['registration_url']
-            );
-            $output .= '</p>';
-          }
-        }
-      }
-    }
-    $output .= '</div>';
-
-  }
-  return $output;
+  return theme('ideallogic_courses', ['items' => $program_section]);
 }
 
 /**
@@ -138,6 +121,7 @@ function ideallogic_block_view($delta = '') {
   $block = [];
   switch ($delta) {
     case 'ideallogic_program':
+      $block['subject'] = NULL;
       $block['content'] = ideallogic_render_data();
       break;
   }
@@ -150,19 +134,44 @@ function ideallogic_block_view($delta = '') {
  */
 function ideallogic_render_data() {
   $program_key = '3TRP-KKVYH';
-  $api_key = variable_get('ideallogic_api_key', '');
-  if ($api_key == '') {
+  $decoded_data = _get_ideallogic_data($program_key);
+  if (!is_array($decoded_data)) {
     drupal_set_message(
       t('You need to configure your Ideal-logic api key.'),
       'error'
     );
     return '';
   }
-  $data = drupal_http_build_query(
-    [
-      'key' => $api_key,
-    ]
-  );
+  $program_data = [];
+  foreach ($decoded_data as $key => $value) {
+    $course_key = $value['all_programs'][1]['id'];
+    if (array_key_exists($course_key, $program_data) && $course_key != $program_key) {
+      $program_data[$course_key]['count'] += 1;
+    }
+    elseif ($course_key != $program_key) {
+      $program_data[$course_key] = [
+        'count' => 1,
+        'name' => $value['all_programs'][1]['name'],
+        'link' => l(t('See courses'), url('/program/' . check_plain($course_key)), [
+          'attributes' => [
+            'class' => 'program-link',
+          ],
+        ]),
+      ];
+    }
+  }
+  return theme('ideallogic_program_block', ['items' => $program_data]);
+}
+
+/**
+ * @param $program_key
+ *
+ * @return mixed
+ */
+function _get_ideallogic_data($program_key) {
+  $api_key = variable_get('ideallogic_api_key', '');
+
+  $data = drupal_http_build_query(['key' => $api_key]);
 
   $options = [
     'method' => 'POST',
@@ -171,34 +180,12 @@ function ideallogic_render_data() {
       'content-type' => 'application/x-www-form-urlencoded',
     ],
   ];
-  $request = drupal_http_request(
-    'https://apps.ideal-logic.com/api/0eeeb538.json?program=' . $program_key,
-    $options
-  );
-  $decoded_data = drupal_json_decode($request->data);
-  $program_data = [];
-  foreach ($decoded_data as $key => $value) {
-    if (array_key_exists(
-        $value['all_programs'][1]['id'],
-        $program_data
-      ) && $value['all_programs'][1]['id'] != $program_key) {
-      $program_data[$value['all_programs'][1]['id']]['count'] += 1;
-    }
-    elseif ($value['all_programs'][1]['id'] != $program_key) {
-      $program_data[$value['all_programs'][1]['id']] = [
-        'count' => 1,
-        'name' => $value['all_programs'][1]['name'],
-      ];
-    }
+  $request = drupal_http_request('https://apps.ideal-logic.com/api/0eeeb538.json?program=' . $program_key,
+    $options);
+  if (!isset($request->error)) {
+    return drupal_json_decode($request->data);
   }
-  $output = '';
-  foreach ($program_data as $id => $data) {
-    $program_url = url('/program/' . $id);
-    $output .= '<div class="program-wrapper">';
-    $output .= '<h3>' . $data['name'] . '</h3>';
-    $output .= '<p>' . $data['count'] . ' ' . $text = $data['count'] > 1 ? ' Courses</p>' : ' Course</p>';
-    $output .= l(t('See courses'), $program_url);
-    $output .= '</div>';
+  else {
+    return $request->error;
   }
-  return $output;
 }
