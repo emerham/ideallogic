@@ -164,9 +164,13 @@ function ideallogic_render_data() {
 }
 
 /**
- * @param $program_key
+ * Perform a request to Ideal-logic api and return the value or error.
+ *
+ * @param string $program_key
+ *   The Program ID to request on.
  *
  * @return mixed
+ *   Either return a JSON decoded array or the request error object.
  */
 function _get_ideallogic_data($program_key) {
   $api_key = variable_get('ideallogic_api_key', '');
