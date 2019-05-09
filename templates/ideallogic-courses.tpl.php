@@ -8,7 +8,7 @@
 <?php foreach ($variables['items'] as $course): ?>
     <div class="course">
         <h2><?php print render($course['name']) ?></h2>
-        <div class="sections">
+        <div class="programs">
           <?php foreach ($course['courses'] as $course_name => $courses): ?>
               <div class="course-name">
                   <h3><?php print render($course_name) ?></h3>
