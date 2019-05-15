@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * A description of what your module does.
@@ -30,7 +31,7 @@ function ideallogic_menu() {
     'description' => 'Add your Ideal-logic API Key.',
     'page callback' => 'drupal_get_form',
     'page arguments' => ['ideallogic_admin_configure'],
-    'access arguments' => ['access administration pages'],
+    'access arguments' => ['administer site configuration'],
     'file' => 'ideallogic.admin.inc',
     'type' => MENU_NORMAL_ITEM,
   ];
@@ -68,14 +69,15 @@ function ideallogic_home() {
  * Page data for the course.
  *
  * @param string $program_id
- *  The program ID to query courses for.
+ *   The program ID to query courses for.
  *
  * @return string
+ *   An HTML string representing the themed output.
  */
 function ideallogic_program_page_mine($program_id) {
   $decoded_program_data = _get_ideallogic_data($program_id);
   $program_section = [];
-  foreach ($decoded_program_data as $key => $data) {
+  foreach ($decoded_program_data as $data) {
     $program_data_id = $data['program']['id'];
     $start_date = strtotime($data['start_date']);
     $end_date = strtotime($data['end_date']);
@@ -131,6 +133,9 @@ function ideallogic_block_view($delta = '') {
 
 /**
  * Render function to get data all programs.
+ *
+ * @return string
+ *   An HTML string representing the themed output.
  */
 function ideallogic_render_data() {
   $program_key = '3TRP-KKVYH';
@@ -143,7 +148,7 @@ function ideallogic_render_data() {
     return '';
   }
   $program_data = [];
-  foreach ($decoded_data as $key => $value) {
+  foreach ($decoded_data as $value) {
     $course_key = $value['all_programs'][1]['id'];
     if (array_key_exists($course_key, $program_data) && $course_key != $program_key) {
       $program_data[$course_key]['count'] += 1;

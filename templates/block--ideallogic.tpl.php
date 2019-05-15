@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file
- * ideallogic block template.
+ * Ideallogic block template.
  */
 ?>
 <div class="program-wrapper">

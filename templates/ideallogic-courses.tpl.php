@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file
- * idealogic courses page template.
+ * Idealogic courses page template.
  */
 ?>
 
@@ -46,4 +47,3 @@
         </div>
     </div>
 <?php endforeach; ?>
-
