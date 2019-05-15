@@ -1,3 +1,3 @@
 name = Ideallogic
-description = A description of what your module does.
+description = Allows Sites to pull in ideal-logic api data for their courses they offer.
 core = 7.x

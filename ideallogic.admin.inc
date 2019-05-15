@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * The administrative form.
+ */
+
+/**
  * Admin configure form for Ideal-Logic.
  */
 function ideallogic_admin_configure() {
