@@ -2,4 +2,4 @@ name = Ideallogic
 description = Allows Sites to pull in ideal-logic api data for their courses they offer.
 core = 7.x
 
-files[] = tests/IdealLogicTestCase.test
+files[] = tests/IdealLogicUnitTestCase.test

@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * Class IdealLogicUnitTestCase.
+ *
+ * Unit test case for Ideallogic.
+ */
+class IdealLogicUnitTestCase extends DrupalUnitTestCase {
+
+  public static function getInfo() {
+    return [
+      'name' => 'Ideal-logic Unit Tests.',
+      'description' => 'Unit tests for our Ideal-logic module',
+      'group' => 'ideallogic',
+    ];
+  }
+
+  public function setUp() {
+    parent::setUp();
+  }
+
+  public function testGetIdeallogicData() {
+    $results = _get_ideallogic_data(NULL);
+    $this->assertTrue(is_array($results), t('Internal function returns a JSON decoded array.'));
+  }
+
+  public function testBuildOptionsList() {
+    $results = _build_options_array();
+    $this->assertTrue(is_array($results), t('Internal function to build an associative array of options for a select lit.'));
+    $this->assertTrue(in_array('OSU Professional Development', $results));
+  }
+
+}

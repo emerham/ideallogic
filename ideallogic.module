@@ -138,7 +138,7 @@ function ideallogic_block_view($delta = '') {
  *   An HTML string representing the themed output.
  */
 function ideallogic_render_data() {
-  $program_key = '3TRP-KKVYH';
+  $program_key = variable_get('ideallogic_program_id');
   $decoded_data = _get_ideallogic_data($program_key);
   if (!is_array($decoded_data)) {
     drupal_set_message(
@@ -189,12 +189,25 @@ function _get_ideallogic_data($program_key) {
       'content-type' => 'application/x-www-form-urlencoded',
     ],
   ];
-  $request = drupal_http_request('https://apps.ideal-logic.com/api/0eeeb538.json?program=' . $program_key,
-    $options);
+  $request = !empty($program_key) ? drupal_http_request('https://apps.ideal-logic.com/api/0eeeb538.json?program=' . $program_key,
+    $options) : drupal_http_request('https://apps.ideal-logic.com/api/0eeeb538.json', $options);
   if (!isset($request->error)) {
     return drupal_json_decode($request->data);
   }
   else {
     return $request->error;
   }
+}
+
+function _build_options_array() {
+  $full_course_list = _get_ideallogic_data(NULL);
+  $options = [];
+  foreach ($full_course_list as $course) {
+    $parent_all_program = end($course['all_programs']);
+    if (isset($parent_all_program['id']) && !empty($parent_all_program['name'])) {
+      $options[$parent_all_program['id']] = $parent_all_program['name'];
+    }
+  }
+  asort($options);
+  return $options;
 }
