@@ -199,6 +199,12 @@ function _get_ideallogic_data($program_key) {
   }
 }
 
+/**
+ * Builds an associative array of program keys and names.
+ *
+ * @return array
+ *   The associative array of program id's and their names.
+ */
 function _build_options_array() {
   $full_course_list = _get_ideallogic_data(NULL);
   $options = [];
