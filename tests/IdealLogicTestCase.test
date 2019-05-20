@@ -1,0 +1,13 @@
+<?php
+
+
+class IdealLogicTestCase extends DrupalUnitTestCase {
+
+  public static function getInfo() {
+    return [
+      'name' => 'Ideal-logic Unit Tests.',
+      'description' => 'Unit tests for our Ideal-logic module',
+      'group' => 'ideallogic',
+    ];
+  }
+}
