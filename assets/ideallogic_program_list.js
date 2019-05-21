@@ -4,10 +4,10 @@
       $('.ideallogic-session-toggle', context).once('ideallogicToggleSessions', function () {
         $(this).click(function () {
           if ($(this).prev().is(':visible')) {
-            $(this).prev().hide();
+            $(this).prev().hide("default");
             $(this).text('See Sessions and Register');
           } else {
-            $(this).prev().show();
+            $(this).prev().show("default");
             $(this).text('Hide Sessions');
           }
         })
