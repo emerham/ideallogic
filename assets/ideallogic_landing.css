@@ -1,0 +1,14 @@
+.ideallogic-programs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 18px;
+  width: 100%;
+  max-width: 768px;
+  margin: auto; }
+
+.ideallogic-program-items {
+  padding: 1rem;
+  background-color: #f6f6f2;
+  border-color: #f9f9f9; }
+
+/*# sourceMappingURL=ideallogic_landing.css.map */

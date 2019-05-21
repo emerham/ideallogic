@@ -7,16 +7,22 @@
 ?>
 
 <?php foreach ($variables['items'] as $course): ?>
-    <div class="course">
+    <div class="ideallogic-course">
         <h2><?php print render($course['name']) ?></h2>
-        <div class="programs">
+        <div class="ideallogic-programs">
           <?php foreach ($course['courses'] as $course_name => $courses): ?>
-              <div class="course-name">
+              <div class="ideallogic-course-items">
                   <h3><?php print render($course_name) ?></h3>
+                  <div class="ideallogic-section-count">
+                          <span class="ideallogic-section-count-number">
+                            <?php print count($courses['section']) ?>
+                          </span>
+                      Sessions Available
+                  </div>
                   <p><?php print render($courses['brief_description']) ?></p>
-                  <div class="sections">
+                  <div class="ideallogic-sections">
                     <?php foreach ($courses['section'] as $section): ?>
-                        <div class="section">
+                        <div class="ideallogic-section-items">
                             <div class="start-date">
                                 <div class="start-month">
                                   <?php print render($section['start_date_month']) ?>
@@ -42,6 +48,7 @@
                         </div>
                     <?php endforeach; ?>
                   </div>
+                  <button class="ideallogic-session-toggle">See Sessions and Register</button>
               </div>
           <?php endforeach; ?>
         </div>

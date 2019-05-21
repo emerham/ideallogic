@@ -21,7 +21,7 @@ function ideallogic_menu() {
   $items['program/%'] = [
     'title' => 'Programs',
     'description' => 'More Program Course Info',
-    'page callback' => 'ideallogic_program_page_mine',
+    'page callback' => '_ideallogic_course_list_page',
     'page arguments' => [1],
     'access arguments' => ['access content'],
     'type' => MENU_CALLBACK,
@@ -62,7 +62,7 @@ function ideallogic_theme($existing, $type, $theme, $path) {
  * Page for all Programs.
  */
 function ideallogic_home() {
-  return ideallogic_render_data();
+  return _ideallogic_landing_content();
 }
 
 /**
@@ -74,7 +74,9 @@ function ideallogic_home() {
  * @return string
  *   An HTML string representing the themed output.
  */
-function ideallogic_program_page_mine($program_id) {
+function _ideallogic_course_list_page($program_id) {
+  drupal_add_css(drupal_get_path('module', 'ideallogic') . '/assets/ideallogic_program_list.css');
+  drupal_add_js(drupal_get_path('module', 'ideallogic') . '/assets/ideallogic_program_list.js');
   $decoded_program_data = _get_ideallogic_data($program_id);
   $program_section = [];
   foreach ($decoded_program_data as $data) {
@@ -124,7 +126,14 @@ function ideallogic_block_view($delta = '') {
   switch ($delta) {
     case 'ideallogic_program':
       $block['subject'] = NULL;
-      $block['content'] = ideallogic_render_data();
+      $block['content'] = [
+        '#markup' => _ideallogic_landing_content(),
+        '#attached' => [
+          'css' => [
+            drupal_get_path('module', 'ideallogic') . '/assets/ideallogic_landing.css',
+          ],
+        ],
+      ];
       break;
   }
 
@@ -137,7 +146,7 @@ function ideallogic_block_view($delta = '') {
  * @return string
  *   An HTML string representing the themed output.
  */
-function ideallogic_render_data() {
+function _ideallogic_landing_content() {
   $program_key = variable_get('ideallogic_program_id');
   $decoded_data = _get_ideallogic_data($program_key);
   if (!is_array($decoded_data)) {
