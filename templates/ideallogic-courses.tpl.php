@@ -9,7 +9,7 @@
 <?php foreach ($variables['items'] as $course): ?>
     <div class="ideallogic-course">
         <h2><?php print render($course['name']) ?></h2>
-        <div class="ideallogic-programs">
+        <div class="ideallogic-courses">
           <?php foreach ($course['courses'] as $course_name => $courses): ?>
               <div class="ideallogic-course-items">
                   <h3><?php print render($course_name) ?></h3>
