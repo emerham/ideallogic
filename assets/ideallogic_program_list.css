@@ -4,21 +4,26 @@
   padding: 1rem;
   background-color: #f6f6f2;
   border-color: #f9f9f9;
-  margin-bottom: 1em; }
+  margin-bottom: 1em;
+}
 
 .ideallogic-section-items {
   border-bottom: black solid 1px;
-  margin-bottom: 1em; }
+  margin-bottom: 1em;
+}
 
 .ideallogic-section-items:last-child {
-  border-bottom: none; }
+  border-bottom: none;
+}
 
 button.ideallogic-session-toggle {
   cursor: pointer;
   border: none;
-  background: none; }
+  background: none;
+}
 
 .ideallogic-sections {
-  display: none; }
+  display: none;
+}
 
 /*# sourceMappingURL=ideallogic_program_list.css.map */
