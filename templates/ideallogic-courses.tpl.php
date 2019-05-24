@@ -5,14 +5,16 @@
  * Idealogic courses page template.
  */
 ?>
-
-<?php foreach ($variables['items'] as $course): ?>
+<?php
+drupal_set_title($variables['items']['program name']);
+?>
+<?php foreach ($variables['items']['courses'] as $course): ?>
     <div class="ideallogic-course">
-        <h2><?php print render($course['name']) ?></h2>
+        <h3><?php print render($course['name']) ?></h3>
         <div class="ideallogic-courses">
           <?php foreach ($course['courses'] as $course_name => $courses): ?>
               <div class="ideallogic-course-items">
-                  <h3><?php print render($course_name) ?></h3>
+                  <h4><?php print render($course_name) ?></h4>
                   <div class="ideallogic-section-count">
                           <span class="ideallogic-section-count-number">
                             <?php print count($courses['section']) ?>

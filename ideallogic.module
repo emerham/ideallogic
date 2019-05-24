@@ -79,15 +79,16 @@ function _ideallogic_course_list_page($program_id) {
   drupal_add_js(drupal_get_path('module', 'ideallogic') . '/assets/ideallogic_program_list.js');
   $decoded_program_data = _get_ideallogic_data($program_id);
   $program_section = [];
+  $program_section['program name'] = $decoded_program_data[0]['all_programs'][1]['name'];
   foreach ($decoded_program_data as $data) {
     $program_data_id = $data['program']['id'];
     $start_date = strtotime($data['start_date']);
     $end_date = strtotime($data['end_date']);
-    $program_section[$program_data_id]['name'] = $data['program']['name'];
-    $program_section[$program_data_id]['courses'][$data['identification']]['brief_description'] = $data['course']['description'];
-    $program_section[$program_data_id]['courses'][$data['identification']]['location'] = $data['course']['delivery'];
-    $program_section[$program_data_id]['courses'][$data['identification']]['instructors'] = $data['instructors'];
-    $program_section[$program_data_id]['courses'][$data['identification']]['section'][] = [
+    $program_section['courses'][$program_data_id]['name'] = $data['program']['name'];
+    $program_section['courses'][$program_data_id]['courses'][$data['identification']]['brief_description'] = $data['course']['description'];
+    $program_section['courses'][$program_data_id]['courses'][$data['identification']]['location'] = $data['course']['delivery'];
+    $program_section['courses'][$program_data_id]['courses'][$data['identification']]['instructors'] = $data['instructors'];
+    $program_section['courses'][$program_data_id]['courses'][$data['identification']]['section'][] = [
       'section_id' => $data['id'],
       'section_name' => $data['course']['name'],
       'program_name' => $data['program']['name'],
