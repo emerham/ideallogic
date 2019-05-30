@@ -9,11 +9,12 @@
  * Admin configure form for Ideal-Logic.
  */
 function ideallogic_admin_configure() {
-  $form['ideallogic_api_key'] = [
+  $form['ideallogic_registration_endpoint'] = [
     '#type' => 'textfield',
-    '#title' => t('Ideal-logic API Key'),
-    '#default_value' => variable_get('ideallogic_api_key', ''),
-    '#description' => t('Your Ideal-logic API Key.'),
+    '#title' => t('Ideal-logic Registration API'),
+    '#default_value' => variable_get('ideallogic_registration_endpoint', ''),
+    '#description' => t('Please enter your Ideal-logic registrations API endpoint.'),
+    '#maxlength' => 1028,
     '#required' => TRUE,
   ];
   $form['ideallogic_program_id'] = [
@@ -22,7 +23,8 @@ function ideallogic_admin_configure() {
     '#description' => t('Select a Program to filter on for the course list.'),
     '#options' => _build_options_array(),
     '#required' => TRUE,
-    '#disabled' => empty(variable_get('ideallogic_api_key')) ? TRUE : FALSE,
+    '#access' => empty(variable_get('ideallogic_registration_endpoint')) ? FALSE : TRUE,
+    '#disabled' => empty(variable_get('ideallogic_registration_endpoint')) ? TRUE : FALSE,
     '#default_value' => variable_get('ideallogic_program_id'),
   ];
 

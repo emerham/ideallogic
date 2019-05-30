@@ -28,7 +28,7 @@ function ideallogic_menu() {
   ];
   $items['admin/config/services/ideallogic'] = [
     'title' => 'Ideal-logic',
-    'description' => 'Add your Ideal-logic API Key.',
+    'description' => 'Configure your Ideal-logic API settings.',
     'page callback' => 'drupal_get_form',
     'page arguments' => ['ideallogic_admin_configure'],
     'access arguments' => ['administer site configuration'],
@@ -75,8 +75,8 @@ function ideallogic_home() {
  *   An HTML string representing the themed output.
  */
 function _ideallogic_course_list_page($program_id) {
-  drupal_add_css(drupal_get_path('module', 'ideallogic') . '/assets/ideallogic_program_list.css');
-  drupal_add_js(drupal_get_path('module', 'ideallogic') . '/assets/ideallogic_program_list.js');
+  drupal_add_css(drupal_get_path('module', 'ideallogic') . '/css/ideallogic_program_list.css');
+  drupal_add_js(drupal_get_path('module', 'ideallogic') . '/js/ideallogic_program_list.js');
   $decoded_program_data = _get_ideallogic_data($program_id);
   $program_section = [];
   $program_section['program name'] = $decoded_program_data[0]['all_programs'][1]['name'];
@@ -94,7 +94,12 @@ function _ideallogic_course_list_page($program_id) {
       'program_name' => $data['program']['name'],
       'section_slots' => $data['slots'],
       'section_slots_remaining' => $data['num_remaining_slots'],
-      'registration_url' => l(t('Register for this session'), $data['registration_url']),
+      'registration_url' => l(t('Register for this session'), $data['registration_url'], [
+        'attributes' => [
+          'title' => 'Registration URL',
+          'class' => ['ideallogic-registration-url'],
+        ],
+      ]),
       'start_date_full' => format_date($start_date),
       'start_date_month' => format_date($start_date, 'custom', 'M'),
       'start_date_day' => format_date($start_date, 'custom', 'd'),
@@ -131,7 +136,7 @@ function ideallogic_block_view($delta = '') {
         '#markup' => _ideallogic_landing_content(),
         '#attached' => [
           'css' => [
-            drupal_get_path('module', 'ideallogic') . '/assets/ideallogic_landing.css',
+            drupal_get_path('module', 'ideallogic') . '/css/ideallogic_landing.css',
           ],
         ],
       ];
@@ -188,19 +193,15 @@ function _ideallogic_landing_content() {
  *   Either return a JSON decoded array or the request error object.
  */
 function _get_ideallogic_data($program_key) {
-  $api_key = variable_get('ideallogic_api_key', '');
-
-  $data = drupal_http_build_query(['key' => $api_key]);
-
+  $api_endpoint = variable_get('ideallogic_registration_endpoint');
   $options = [
-    'method' => 'POST',
-    'data' => $data,
+    'method' => 'GET',
     'headers' => [
-      'content-type' => 'application/x-www-form-urlencoded',
+      'content-type' => 'application/json',
     ],
   ];
-  $request = !empty($program_key) ? drupal_http_request('https://apps.ideal-logic.com/api/0eeeb538.json?program=' . $program_key,
-    $options) : drupal_http_request('https://apps.ideal-logic.com/api/0eeeb538.json', $options);
+  $request = !empty($program_key) ? drupal_http_request($api_endpoint . '?program=' . $program_key,
+    $options) : drupal_http_request($api_endpoint, $options);
   if (!isset($request->error)) {
     return drupal_json_decode($request->data);
   }
