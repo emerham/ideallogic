@@ -33,24 +33,28 @@ drupal_set_title($variables['items']['program name']);
                                   <?php print render($section['start_date_day']) ?>
                                 </div>
                             </div>
-                            <div class="start-end-time">
-                              <?php print render($section['start_date_time']) ?>
-                                - <?php print render($section['end_date_time']) ?>
+                            <div class="ideallogic-session-info">
+                                <div class="start-end-time">
+                                  <?php print render($section['start_date_time']) ?>
+                                    - <?php print render($section['end_date_time']) ?>
+                                </div>
+                              <?php if (!empty($section['section_slots'])): ?>
+                                  <div class="section-slots">
+                                    <?php print render($section['section_slots_remaining']) ?>
+                                      of
+                                    <?php print render($section['section_slots']) ?>
+                                      Seats
+                                      remaining
+                                  </div>
+                              <?php endif ?>
                             </div>
-                          <?php if (!empty($section['section_slots'])): ?>
-                              <div class="section-slots">
-                                <?php print render($section['section_slots_remaining']) ?>
-                                  of
-                                <?php print render($section['section_slots']) ?>
-                                  Seats
-                                  remaining.
-                              </div>
-                          <?php endif ?>
                           <?php print render($section['registration_url']) ?>
                         </div>
                     <?php endforeach; ?>
                   </div>
-                  <button class="ideallogic-session-toggle">See Sessions and Register</button>
+                  <button class="ideallogic-session-toggle">See Sessions and
+                      Register
+                  </button>
               </div>
           <?php endforeach; ?>
         </div>

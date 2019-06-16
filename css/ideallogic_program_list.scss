@@ -7,8 +7,6 @@
 }
 
 .ideallogic-course-items {
-  display: flex;
-  flex-direction: column;
   padding: 1rem;
   background-color: #f6f6f2;
   border-color: #f9f9f9;
@@ -28,6 +26,8 @@ button.ideallogic-session-toggle {
   cursor: pointer;
   border: none;
   background: none;
+  margin: 0 auto;
+  display: block;
 }
 
 .ideallogic-sections {
